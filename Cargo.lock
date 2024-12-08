@@ -23,6 +23,7 @@ version = "0.11.0"
 dependencies = [
  "chrono",
  "dhat",
+ "grid_2d",
  "itertools",
  "nom",
  "pico-args",
@@ -107,6 +108,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "coord_2d"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1020a2ed8bf43fc850b01db7570c0e4194d3e3d8d806a5f1857d2ab15feec57"
+
+[[package]]
 name = "core-foundation-sys"
 version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -139,6 +146,15 @@ name = "gimli"
 version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4271d37baee1b8c7e4b708028c57d816cf9d2434acb33a549475f78c181f6253"
+
+[[package]]
+name = "grid_2d"
+version = "0.15.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dfb23b456edfd3f388df8047a84a367a1168f4606bc21fe1e5dc9606a23689b"
+dependencies = [
+ "coord_2d",
+]
 
 [[package]]
 name = "iana-time-zone"
