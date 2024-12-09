@@ -59,10 +59,10 @@ fn check_x_mas(grid: &Grid<char>, pos: Coord) -> bool {
         let bottom_left = grid.get(pos + Coord::new(-1, 1));
 
         match (top_left, bottom_right) {
-            (Some('M'), Some('S')) | (Some('S'), Some('M')) => match (top_right, bottom_left) {
-                (Some('M'), Some('S')) | (Some('S'), Some('M')) => true,
-                _ => false,
-            },
+            (Some('M'), Some('S')) | (Some('S'), Some('M')) => matches!(
+                (top_right, bottom_left),
+                (Some('M'), Some('S')) | (Some('S'), Some('M'))
+            ),
             _ => false,
         }
     } else {
