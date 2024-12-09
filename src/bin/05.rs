@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use nom::{
     bytes::complete::tag,
     character::{self, complete::newline},
@@ -39,19 +41,27 @@ fn parse_input(input: &str) -> (Vec<OrderingRule>, Vec<UpdatePages>) {
     (rules, updates)
 }
 
-fn correctly_ordered(pages: &[u32], rules: &[OrderingRule]) -> bool {
-    rules
-        .iter()
-        .filter_map(|(before, after)| {
-            let pos_before = pages.iter().position(|e| e == before);
-            let pos_after = pages.iter().position(|e| e == after);
+fn cmp_pages(lhs: u32, rhs: u32, rules: &[OrderingRule]) -> Ordering {
+    for (before, after) in rules {
+        if *before == lhs && *after == rhs {
+            return Ordering::Less;
+        }
+        if *before == rhs && *after == lhs {
+            return Ordering::Greater;
+        }
+    }
 
-            match (pos_before, pos_after) {
-                (Some(pos_before), Some(pos_after)) => Some(pos_before < pos_after),
-                _ => None,
-            }
-        })
-        .all(|b| b)
+    Ordering::Equal
+}
+
+fn correctly_ordered(pages: &[u32], rules: &[OrderingRule]) -> bool {
+    pages.is_sorted_by(|lhs, rhs| cmp_pages(*lhs, *rhs, rules) != Ordering::Greater)
+}
+
+fn correct_ordering(mut pages: Vec<u32>, rules: &[OrderingRule]) -> Vec<u32> {
+    pages.sort_by(|lhs, rhs| cmp_pages(*lhs, *rhs, rules));
+
+    pages
 }
 
 fn middle_page(pages: &[u32]) -> Option<u32> {
@@ -74,8 +84,19 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u32> {
+    let (rules, updates) = parse_input(input);
+    let mut sum = 0;
+
+    for update in updates {
+        if correctly_ordered(&update, &rules) {
+            continue;
+        }
+        let corrected = correct_ordering(update.clone(), &rules);
+        sum += middle_page(&corrected).expect("should be a middle page");
+    }
+
+    Some(sum)
 }
 
 #[cfg(test)]
@@ -91,6 +112,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(123));
     }
 }
